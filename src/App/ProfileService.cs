@@ -17,10 +17,19 @@ namespace AzureTokenMaker.App {
             if (profile == null) {
                 throw new ArgumentNullException("profile");
             }
+
+            _profiles.RemoveWhere(p => p.Equals(profile));
             _profiles.Add(profile);
-            var raw = serializeProfiles( _profiles );
-            Settings.Default.Profiles = raw;
-            Settings.Default.Save();
+            internalSave();
+        }
+
+        public void Delete(Profile profile) {
+            if (profile == null) {
+                throw new ArgumentNullException("profile");
+            }
+
+            _profiles.RemoveWhere( p => p.Equals( profile ) );
+            internalSave();
         }
 
         public ISet<Profile> GetProfiles () {
@@ -34,6 +43,12 @@ namespace AzureTokenMaker.App {
             var result = new ProfileService( profiles );
             return result;
 
+        }
+
+        void internalSave() {
+            var raw = serializeProfiles( _profiles );
+            Settings.Default.Profiles = raw;
+            Settings.Default.Save();
         }
 
         static string serializeProfiles ( IEnumerable<Profile> profiles ) {

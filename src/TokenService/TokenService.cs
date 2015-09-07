@@ -1,6 +1,8 @@
 ﻿using System;
-using System.Threading.Tasks;
+using System.Text;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace AzureTokenMaker.Service {
     public class TokenService {
@@ -10,12 +12,12 @@ namespace AzureTokenMaker.Service {
         public TokenService() {
             _context = new AuthenticationContext("https://login.windows.net/common");
         }
-        public async Task<string> GetClientToken ( TokenParameters parameters ) {
+        public string GetClientToken ( TokenParameters parameters ) {
             if (parameters == null) {
                 throw new ArgumentNullException("parameters");
             }
 
-            var result = await _context.AcquireTokenAsync( parameters.ResourceId,
+            var result = _context.AcquireToken( parameters.ResourceId,
                       new ClientCredential( parameters.ClientId, parameters.ClientKey ) );
 
             return result.AccessToken;
@@ -27,5 +29,41 @@ namespace AzureTokenMaker.Service {
                                   parameters.ClientId, new UserCredential( parameters.Username, parameters.Password ) );
             return result.AccessToken;
         }
+
+        //Note: Code was adapted from https://github.com/CommonWell/Token-Maker/blob/master/src/Token%20Maker/MainWindow.xaml.cs#L213
+        //Thanks Peter Bernhardt!
+        public DecodedToken DecodeToken(string token) {
+            if (String.IsNullOrWhiteSpace(token)) {
+                throw new ArgumentException("token cannot be null or empty.", "token");
+            }
+
+            string[] parts = token.Split( '.' );
+            JObject jsonPart = JObject.Parse( DecodeFromBase64( parts[0] ) );
+
+            string header = jsonPart.ToString( Formatting.Indented );
+
+            jsonPart = JObject.Parse( DecodeFromBase64( parts[1] ) );
+            string claims = jsonPart.ToString( Formatting.Indented );
+
+            string signature = parts[2];
+
+            var result = new DecodedToken( signature, claims, header );
+
+            return result;
+        }
+
+        //Note: Code was adapted from https://github.com/CommonWell/Token-Maker/blob/master/src/Token%20Maker/MainWindow.xaml.cs#L512
+        //Thanks Peter Bernhardt!
+        private static string DecodeFromBase64 ( string encodedData ) {
+            int padding = encodedData.Length % 4;
+            if ( padding > 0 ) {
+                encodedData += new string( '=', ( 4 - padding ) );
+            }
+            byte[] encodedDataAsBytes = Convert.FromBase64String( encodedData );
+            string returnValue = Encoding.ASCII.GetString( encodedDataAsBytes );
+
+            return returnValue;
+        }
     }
+
 }

@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using AzureTokenMaker.App.Properties;
 
 namespace AzureTokenMaker.App {
     static class Program {
@@ -14,7 +10,7 @@ namespace AzureTokenMaker.App {
         static void Main () {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault( false );
-            Application.Run( new Main() );
+            Application.Run( new MainWindow() );
         }
     }
 }
