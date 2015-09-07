@@ -78,6 +78,7 @@ namespace AzureTokenMaker.App {
         }
 
         private void cboProfile_SelectedIndexChanged ( object sender, EventArgs e ) {
+            reset(keepSelectedItem: true);
             var selectedProfile = cboProfile.SelectedItem as Profile;
             if (selectedProfile != null) {
                 populateControls(selectedProfile);
@@ -136,8 +137,10 @@ namespace AzureTokenMaker.App {
             tstat.Text = String.Concat( "Created profile '", profile.Name, "'" );
         }
 
-        private void reset(bool keepOutput = true) {
-            cboProfile.SelectedItem = null;
+        private void reset(bool keepOutput = true, bool keepSelectedItem = false) {
+            if (!keepSelectedItem) {
+                cboProfile.SelectedItem = null;
+            }
             radClient.Checked = true;
             txtAppId.Text = String.Empty;
             txtPassword.Text = String.Empty;
