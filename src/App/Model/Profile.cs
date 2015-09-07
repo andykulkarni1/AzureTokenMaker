@@ -1,14 +1,16 @@
 ﻿using System;
-using AzureTokenMaker.Service;
+using AzureTokenMaker.App.Services;
 
-namespace AzureTokenMaker.App {
+namespace AzureTokenMaker.App.Model {
 
-    public enum ProfileType {
+    public enum ProfileType
+    {
         Client,
         User
     }
 
-    sealed class Profile : IEquatable<Profile>{
+    public sealed class Profile : IEquatable<Profile>
+    {
 
         public string Name { get; set; }
 

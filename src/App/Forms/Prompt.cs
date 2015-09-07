@@ -1,8 +1,8 @@
 ﻿using System.Windows.Forms;
 
-namespace AzureTokenMaker.App {
-    public static class Prompt {
-        public static string ShowDialog ( string text, string caption ) {
+namespace AzureTokenMaker.App.Forms {
+    static class Prompt {
+        public static string ShowDialog ( string text, string caption, string defaultValue = null ) {
             var prompt = new Form
                 {
                     Width = 500,
@@ -20,7 +20,8 @@ namespace AzureTokenMaker.App {
             var textBox = new TextBox() {
                 Left = 50,
                 Top = 50,
-                Width = 400
+                Width = 400,
+                Text = defaultValue
             };
             var confirmation = new Button() {
                 Text = "Ok",

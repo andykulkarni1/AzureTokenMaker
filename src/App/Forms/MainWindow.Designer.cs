@@ -1,4 +1,4 @@
-﻿namespace AzureTokenMaker.App {
+﻿namespace AzureTokenMaker.App.Forms {
     partial class MainWindow {
         /// <summary>
         /// Required designer variable.
@@ -344,7 +344,7 @@
             // 
             this.lnkNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lnkNew.AutoSize = true;
-            this.lnkNew.Location = new System.Drawing.Point(407, 19);
+            this.lnkNew.Location = new System.Drawing.Point(402, 19);
             this.lnkNew.Name = "lnkNew";
             this.lnkNew.Size = new System.Drawing.Size(36, 19);
             this.lnkNew.TabIndex = 6;
@@ -356,7 +356,7 @@
             // 
             this.lnkSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lnkSave.AutoSize = true;
-            this.lnkSave.Location = new System.Drawing.Point(460, 19);
+            this.lnkSave.Location = new System.Drawing.Point(455, 19);
             this.lnkSave.Name = "lnkSave";
             this.lnkSave.Size = new System.Drawing.Size(37, 19);
             this.lnkSave.TabIndex = 5;
@@ -368,7 +368,7 @@
             // 
             this.lnkDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lnkDelete.AutoSize = true;
-            this.lnkDelete.Location = new System.Drawing.Point(512, 19);
+            this.lnkDelete.Location = new System.Drawing.Point(507, 19);
             this.lnkDelete.Name = "lnkDelete";
             this.lnkDelete.Size = new System.Drawing.Size(48, 19);
             this.lnkDelete.TabIndex = 4;
@@ -506,6 +506,7 @@
             // 
             // statusStrip
             // 
+            this.statusStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.lblStatus,
             this.tstat});

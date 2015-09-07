@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using AzureTokenMaker.App.Forms;
 
 namespace AzureTokenMaker.App {
     static class Program {
