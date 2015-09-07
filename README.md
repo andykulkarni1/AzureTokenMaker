@@ -5,6 +5,6 @@ The purpose of this repo is to house a simple tool for generating client and use
 It also has a Json Web Token decoder so you can see all of the claims that are in your generated tokens, or other tokens you find laying around cyberspace.
 
 ##Screenshots##
-![enter image description here](https://lh3.googleusercontent.com/_gUBJAjofXV3ypxxCh3tQBAvw9WatN52Q3SI82fR3bc=s0 "A not so sexy screenshot on Windows 2008 Server R2.")
+![enter image description here](https://lh3.googleusercontent.com/_gUBJAjofXV3ypxxCh3tQBAvw9WatN52Q3SI82fR3bc=s0 "A screenshot on Windows 7.")
 ##Technologies and Dependencies##
-This is a simple Windows .NET 4.5 desktop application built in C# (WinForms) and Visual Studio 2012. In addition to the full version of .NET framework v4.5 (not client profile), it uses the Active Directory Authentication Library provided by Microsoft, and the Json.Net library from Newtonsoft.
+This is a simple Windows .NET 4.5 desktop application built in C# (WinForms) and Visual Studio 2013. In addition to the full version of .NET framework v4.5 (not client profile), it uses the Active Directory Authentication Library provided by Microsoft, and the Json.Net library from Newtonsoft.
