@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Forms;
-using AzureTokenMaker.Service;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Newtonsoft.Json;
+using AzureTokenMaker.App.Services;
+using AzureTokenMaker.App.Model;
 
-namespace AzureTokenMaker.App {
+namespace AzureTokenMaker.App.Forms {
     public partial class MainWindow : Form {
 
         private ProfileService _profileService;
@@ -35,7 +36,7 @@ namespace AzureTokenMaker.App {
             grpConfiguration.Enabled = isEnabled;
         }
 
-        private void toggleSaveAndDelete(bool isEnabled) {
+        private void toggleProfileButtons(bool isEnabled) {
             lnkSave.Enabled = isEnabled;
             lnkDelete.Enabled = isEnabled;
         }
@@ -51,10 +52,12 @@ namespace AzureTokenMaker.App {
             toggleConfigurationGroup(false);
 
             if (cboProfile.Items.Count < 1) {
-                toggleSaveAndDelete( false );
+                toggleProfileButtons( false );
             }
             tstat.Text = "Profile deleted";
             _currentProfile = null;
+            reset();
+            toggleProfileButtons(false);
         }
 
         private void loadProfiles() {
@@ -73,7 +76,7 @@ namespace AzureTokenMaker.App {
             _profileService = ProfileService.Init();
             _tokenService = new TokenService();
             toggleConfigurationGroup(false);
-            toggleSaveAndDelete(false);
+            toggleProfileButtons(false);
             loadProfiles();
         }
 
@@ -82,7 +85,7 @@ namespace AzureTokenMaker.App {
             var selectedProfile = cboProfile.SelectedItem as Profile;
             if (selectedProfile != null) {
                 populateControls(selectedProfile);
-                toggleSaveAndDelete( true );
+                toggleProfileButtons( true );
                 tstat.Text = String.Concat("Loaded profile '", selectedProfile.Name, "'");
                 _currentProfile = selectedProfile;
             }
@@ -106,12 +109,16 @@ namespace AzureTokenMaker.App {
 
         private void lnkSave_LinkClicked ( object sender, LinkLabelLinkClickedEventArgs e ) {
             Profile targetProfile = getProposedProfile();
-
-            _profileService.Save( targetProfile );
-            loadProfiles();
-            populateControls( targetProfile );
-            cboProfile.SelectedItem = targetProfile;
+            save(targetProfile);            
             tstat.Text = String.Concat( "Saved profile '", targetProfile.Name, "'" );
+        }
+
+        private void save(Profile targetProfile)
+        {
+            _profileService.Save(targetProfile);
+            loadProfiles();
+            populateControls(targetProfile);
+            cboProfile.SelectedItem = targetProfile;
             _currentProfile = targetProfile;
         }
 
@@ -133,7 +140,7 @@ namespace AzureTokenMaker.App {
             var index = cboProfile.Items.IndexOf(profile);
 
             cboProfile.SelectedIndex = index;
-            toggleSaveAndDelete( true );
+            toggleProfileButtons( true );
             tstat.Text = String.Concat( "Created profile '", profile.Name, "'" );
         }
 
@@ -212,7 +219,7 @@ namespace AzureTokenMaker.App {
             }
 
             if ( String.IsNullOrWhiteSpace( txtAppId.Text ) ) {
-                erpConfiguration.SetError( txtAppId, "Please enter a app id." );
+                erpConfiguration.SetError( txtAppId, "Please enter an app id." );
                 isValid = false;
             }
 
@@ -239,7 +246,7 @@ namespace AzureTokenMaker.App {
                 isValid = false;
             }
             if ( String.IsNullOrWhiteSpace( txtAppId.Text ) ) {
-                erpConfiguration.SetError( txtAppId, "Please enter a app id." );
+                erpConfiguration.SetError( txtAppId, "Please enter an app id." );
                 isValid = false;
             }
             return isValid;
@@ -367,5 +374,28 @@ namespace AzureTokenMaker.App {
                 }
             }
         }
+
+        //private void toggleRename(bool isEnabled)
+        //{
+        //    lnkRename.Enabled = isEnabled;
+        //}
+
+        //private void lnkRename_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        //{
+        //    if (_currentProfile != null)
+        //    {
+        //        string newName = Prompt.ShowDialog("What would you like the new name to be?", "Rename Profile", _currentProfile.Name);
+
+        //        if (!String.IsNullOrWhiteSpace(newName))
+        //        {
+        //            newName = newName.Trim();
+        //            _currentProfile.Name = newName;
+        //            cboProfile.Text = newName;
+        //            var selectedProfile = (Profile)cboProfile.SelectedItem;
+        //            selectedProfile.Name = newName;
+        //            _profileService.Save(selectedProfile);
+        //        }
+        //    }
+        //}
     }
 }

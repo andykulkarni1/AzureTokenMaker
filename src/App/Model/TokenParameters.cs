@@ -1,6 +1,6 @@
 ﻿
-namespace AzureTokenMaker.Service {
-    public class TokenParameters {
+namespace AzureTokenMaker.App.Model {
+    public sealed class TokenParameters {
         public string ClientId {
             get; set; }
 

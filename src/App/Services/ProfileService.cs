@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using AzureTokenMaker.App.Properties;
 using Newtonsoft.Json;
+using AzureTokenMaker.App.Model;
 
-namespace AzureTokenMaker.App {
+namespace AzureTokenMaker.App.Services {
     sealed class ProfileService {
 
         private readonly HashSet<Profile> _profiles;

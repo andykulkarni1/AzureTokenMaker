@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-namespace AzureTokenMaker.App {
-    sealed class ProfileCollection : IEnumerable<Profile> {
+namespace AzureTokenMaker.App.Model {
+    public sealed class ProfileCollection : IEnumerable<Profile>
+    {
 
         private HashSet<Profile> _profiles = new HashSet<Profile>();
 

@@ -3,8 +3,9 @@ using System.Text;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using AzureTokenMaker.App.Model;
 
-namespace AzureTokenMaker.Service {
+namespace AzureTokenMaker.App.Services {
     public class TokenService {
 
         private readonly AuthenticationContext _context;
