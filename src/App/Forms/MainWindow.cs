@@ -47,14 +47,16 @@ namespace AzureTokenMaker.App.Forms {
             if (confirmation == DialogResult.No) {
                 return;
             }
-            _profileService.Delete((Profile)cboProfile.SelectedItem);
+            var profile = (Profile)cboProfile.SelectedItem;
+            string profileName = profile.Name;
+            _profileService.Delete(profile);
             loadProfiles();
             toggleConfigurationGroup(false);
 
             if (cboProfile.Items.Count < 1) {
                 toggleProfileButtons( false );
             }
-            tstat.Text = "Profile deleted";
+            tstat.Text = String.Format("Deleted profile '{0}'", profileName);
             _currentProfile = null;
             reset();
             toggleProfileButtons(false);
@@ -190,6 +192,7 @@ namespace AzureTokenMaker.App.Forms {
             }
             tstat.Text = "Generating token...";
             toggleGenerate(false);
+            UseWaitCursor = true;
             bgwMain.RunWorkerAsync(tokenParameters);
         }
 
@@ -271,12 +274,19 @@ namespace AzureTokenMaker.App.Forms {
                     }
                 }
                 txtOutput.Text = text;
-                tstat.Text = "ATTENTION: There was an error. See Output box for details.";
+                tstat.Text = "ATTENTION: There was an error. See Output box for details";
+                lnkCopy.Enabled = true;
+                lnkCopyToClip.Enabled = false;
+                lnkCopyToDecode.Enabled = false;
             } else {
                 txtOutput.Text = (string) e.Result;
-                tstat.Text = "Generated token.";
+                tstat.Text = String.Format("Generated token for '{0}'", txtAppId.Text);
+                lnkCopy.Enabled = true;
+                lnkCopyToClip.Enabled = true;
+                lnkCopyToDecode.Enabled = true;
             }
             toggleGenerate(true);
+            UseWaitCursor = false;
         }
 
         private void lnkCopyToClip_LinkClicked ( object sender, LinkLabelLinkClickedEventArgs e ) {
@@ -284,6 +294,7 @@ namespace AzureTokenMaker.App.Forms {
                 return;
             }
             Clipboard.SetText("Authorization: Bearer " + txtOutput.Text.Trim());
+            tstat.Text = "The output was copied to the clipboard as an HTTP Authorization header";
         }
 
         private void handleTypeSelection ( object sender, EventArgs e ) {
@@ -294,6 +305,7 @@ namespace AzureTokenMaker.App.Forms {
                 lblUsername.Visible = false;
                 txtPassword.Visible = false;
                 lblPassword.Visible = false;
+                lblClientIdInstruction.Visible = false;
             }else if (radUser.Checked) {
                 txtClientKey.Visible = false;
                 lblClientKey.Visible = false;
@@ -301,6 +313,7 @@ namespace AzureTokenMaker.App.Forms {
                 lblUsername.Visible = true;
                 txtPassword.Visible = true;
                 lblPassword.Visible = true;
+                lblClientIdInstruction.Visible = true;
             }
         }
 
@@ -320,7 +333,7 @@ namespace AzureTokenMaker.App.Forms {
                 txtSignature.Text = String.Empty;
                 txtHeader.Text = String.Empty;
                 txtClaims.Text = exceptionJson;
-                tstat.Text = "ATTENTION: There was an error decoding. See claims box for details.";
+                tstat.Text = "ATTENTION: There was an error decoding. See claims box for details";
             }
         }
 
@@ -373,6 +386,16 @@ namespace AzureTokenMaker.App.Forms {
                     e.Cancel = true;
                 }
             }
+        }
+
+        private void lnkCopy_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (String.IsNullOrWhiteSpace(txtOutput.Text))
+            {
+                return;
+            }
+            Clipboard.SetText(txtOutput.Text.Trim());
+            tstat.Text = "The output was copied to the clipboard";
         }
 
         //private void toggleRename(bool isEnabled)
