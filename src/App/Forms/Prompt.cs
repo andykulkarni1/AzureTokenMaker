@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.Drawing;
+using System.Windows.Forms;
 
 namespace AzureTokenMaker.App.Forms {
     static class Prompt {
@@ -6,9 +7,10 @@ namespace AzureTokenMaker.App.Forms {
             var prompt = new Form
                 {
                     Width = 500,
-                    Height = 170,
+                    Height = 210,
                     FormBorderStyle = FormBorderStyle.FixedDialog,
                     Text = caption,
+                    Font = new Font("Segoe UI", 12),
                     StartPosition = FormStartPosition.CenterScreen
                 };
             var textLabel = new Label() {
@@ -27,7 +29,8 @@ namespace AzureTokenMaker.App.Forms {
                 Text = "Ok",
                 Left = 350,
                 Width = 100,
-                Top = 80,
+                Height = 40,
+                Top = 100,
                 DialogResult = DialogResult.OK
             };
             confirmation.Click += ( sender, e ) => prompt.Close();
