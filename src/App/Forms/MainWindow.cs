@@ -29,6 +29,15 @@ namespace AzureTokenMaker.App.Forms {
                 result.Password = txtPassword.Text;
                 result.Username = txtUsername.Text;
             }
+
+            if (radSingleTenant.Checked)
+            {
+                result.Tenant = txtTenant.Text;
+            }
+            else
+            {
+                result.Tenant = "common";
+            }
             return result;
         }
 
@@ -106,22 +115,35 @@ namespace AzureTokenMaker.App.Forms {
             } else {
                 radUser.Checked = true;
             }
+
+            if (selectedProfile.TenantType == TenantType.Single)
+            {
+                radSingleTenant.Checked = true;
+                txtTenant.Text = selectedProfile.Data.Tenant;
+            }
+            else
+            {
+                radMultiTenant.Checked = true;
+                txtTenant.Text = String.Empty;
+            }
+
             toggleConfigurationGroup(true);
         }
 
         private void lnkSave_LinkClicked ( object sender, LinkLabelLinkClickedEventArgs e ) {
-            Profile targetProfile = getProposedProfile();
-            save(targetProfile);            
-            tstat.Text = String.Concat( "Saved profile '", targetProfile.Name, "'" );
+            var savedProfile = save();
+            tstat.Text = String.Concat("Saved profile '", savedProfile.Name, "'");
         }
 
-        private void save(Profile targetProfile)
+        private Profile save()
         {
+            Profile targetProfile = getProposedProfile();
             _profileService.Save(targetProfile);
             loadProfiles();
             populateControls(targetProfile);
             cboProfile.SelectedItem = targetProfile;
             _currentProfile = targetProfile;
+            return _currentProfile;
         }
 
         private void lnkNew_LinkClicked ( object sender, LinkLabelLinkClickedEventArgs e ) {
@@ -146,7 +168,7 @@ namespace AzureTokenMaker.App.Forms {
             tstat.Text = String.Concat( "Created profile '", profile.Name, "'" );
         }
 
-        private void reset(bool keepOutput = true, bool keepSelectedItem = false) {
+        private void reset(bool keepSelectedItem = false) {
             if (!keepSelectedItem) {
                 cboProfile.SelectedItem = null;
             }
@@ -156,10 +178,7 @@ namespace AzureTokenMaker.App.Forms {
             txtClientKey.Text = String.Empty;
             txtClientId.Text = String.Empty;
             txtUsername.Text = String.Empty;
-
-            if (!keepOutput) {
-                txtOutput.Text = String.Empty;
-            }
+            txtOutput.Text = String.Empty;
         }
 
         private Profile getProposedProfile() {
@@ -168,7 +187,8 @@ namespace AzureTokenMaker.App.Forms {
                 {
                     Name = cboProfile.Text,
                     Data = createTokenParametersFromInput(),
-                    Type = radClient.Checked ? ProfileType.Client : ProfileType.User
+                    Type = radClient.Checked ? ProfileType.Client : ProfileType.User,
+                    TenantType = radMultiTenant.Checked ? TenantType.Multi : TenantType.Single,
                 };
 
             return profile;
@@ -210,6 +230,14 @@ namespace AzureTokenMaker.App.Forms {
             tokenParameters.ClientId = txtClientId.Text.Trim();
             tokenParameters.ClientKey = txtClientKey.Text.Trim();
             tokenParameters.ResourceId = txtAppId.Text.Trim();
+            if (radMultiTenant.Checked)
+            {
+                tokenParameters.Tenant = "common";
+            }
+            else
+            {
+                tokenParameters.Tenant = txtTenant.Text;
+            }
             return tokenParameters;
         }
 
@@ -251,6 +279,15 @@ namespace AzureTokenMaker.App.Forms {
             if ( String.IsNullOrWhiteSpace( txtAppId.Text ) ) {
                 erpConfiguration.SetError( txtAppId, "Please enter an app id." );
                 isValid = false;
+            }
+
+            if (radSingleTenant.Checked)
+            {
+                if (String.IsNullOrWhiteSpace(txtTenant.Text))
+                {
+                    erpConfiguration.SetError(txtTenant, "Please enter a tenant name or id.");
+                    isValid = false;
+                }
             }
             return isValid;
         }
@@ -306,6 +343,7 @@ namespace AzureTokenMaker.App.Forms {
                 txtPassword.Visible = false;
                 lblPassword.Visible = false;
                 lblClientIdInstruction.Visible = false;
+                grpTenant.Visible = true;
             }else if (radUser.Checked) {
                 txtClientKey.Visible = false;
                 lblClientKey.Visible = false;
@@ -314,6 +352,7 @@ namespace AzureTokenMaker.App.Forms {
                 txtPassword.Visible = true;
                 lblPassword.Visible = true;
                 lblClientIdInstruction.Visible = true;
+                grpTenant.Visible = false;
             }
         }
 
@@ -343,7 +382,8 @@ namespace AzureTokenMaker.App.Forms {
             btnDecode_Click(sender, EventArgs.Empty);
         }
 
-        private bool isDirty(Profile target) {
+        private bool isDirty(Profile target)
+        {
 
             if (_currentProfile == null || target == null)
                 return false;
@@ -372,19 +412,34 @@ namespace AzureTokenMaker.App.Forms {
             if (target.Data.ResourceId != _currentProfile.Data.ResourceId)
                 return true;
 
+            if (target.Data.Tenant != _currentProfile.Data.Tenant)
+                return true;
+
+            if (target.TenantType != _currentProfile.TenantType)
+                return true;
+
             return false;
         }
 
         private void MainWindow_FormClosing ( object sender, FormClosingEventArgs e ) {
             var target = getProposedProfile();
             if (isDirty(target)) {
-                if (
-                    MessageBox.Show(this,
-                                    "You have pending changes. Are you sure you want to exit and lose the changes?",
-                                    "Exit without saving?", MessageBoxButtons.OKCancel, MessageBoxIcon.Question,
-                                    MessageBoxDefaultButton.Button2) == DialogResult.Cancel) {
-                    e.Cancel = true;
-                }
+                
+                    var result = MessageBox.Show(this,
+                                    "You have pending changes. Would you like to save before exiting?\r\nClick 'Yes' to save and close.\r\nClick 'No' to discard the changes and close.\r\nClick 'Cancel' to return.",
+                                    "Unsaved Changes", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question,
+                                    MessageBoxDefaultButton.Button3);
+                    switch (result)
+                    {
+                        case System.Windows.Forms.DialogResult.Yes:
+                            save();
+                            return;
+                        case System.Windows.Forms.DialogResult.No:
+                            return;
+                        case System.Windows.Forms.DialogResult.Cancel:
+                            e.Cancel = true;
+                            return;
+                    }                
             }
         }
 
@@ -398,27 +453,9 @@ namespace AzureTokenMaker.App.Forms {
             tstat.Text = "The output was copied to the clipboard";
         }
 
-        //private void toggleRename(bool isEnabled)
-        //{
-        //    lnkRename.Enabled = isEnabled;
-        //}
-
-        //private void lnkRename_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        //{
-        //    if (_currentProfile != null)
-        //    {
-        //        string newName = Prompt.ShowDialog("What would you like the new name to be?", "Rename Profile", _currentProfile.Name);
-
-        //        if (!String.IsNullOrWhiteSpace(newName))
-        //        {
-        //            newName = newName.Trim();
-        //            _currentProfile.Name = newName;
-        //            cboProfile.Text = newName;
-        //            var selectedProfile = (Profile)cboProfile.SelectedItem;
-        //            selectedProfile.Name = newName;
-        //            _profileService.Save(selectedProfile);
-        //        }
-        //    }
-        //}
+        private void handleTenantSelection(object sender, EventArgs e)
+        {
+            txtTenant.Visible = radSingleTenant.Checked;
+        }
     }
 }

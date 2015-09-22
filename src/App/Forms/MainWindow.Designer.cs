@@ -27,11 +27,17 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             this.tabMain = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.grpOutput = new System.Windows.Forms.GroupBox();
+            this.lnkCopy = new System.Windows.Forms.LinkLabel();
+            this.txtOutput = new System.Windows.Forms.TextBox();
             this.lnkCopyToDecode = new System.Windows.Forms.LinkLabel();
             this.lnkCopyToClip = new System.Windows.Forms.LinkLabel();
-            this.grpOutput = new System.Windows.Forms.GroupBox();
-            this.txtOutput = new System.Windows.Forms.TextBox();
             this.grpConfiguration = new System.Windows.Forms.GroupBox();
+            this.grpTenant = new System.Windows.Forms.GroupBox();
+            this.radSingleTenant = new System.Windows.Forms.RadioButton();
+            this.radMultiTenant = new System.Windows.Forms.RadioButton();
+            this.txtTenant = new System.Windows.Forms.TextBox();
+            this.lblClientIdInstruction = new System.Windows.Forms.Label();
             this.txtPassword = new System.Windows.Forms.TextBox();
             this.lblPassword = new System.Windows.Forms.Label();
             this.txtUsername = new System.Windows.Forms.TextBox();
@@ -69,12 +75,11 @@
             this.erpConfiguration = new System.Windows.Forms.ErrorProvider(this.components);
             this.erpDecode = new System.Windows.Forms.ErrorProvider(this.components);
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.lblClientIdInstruction = new System.Windows.Forms.Label();
-            this.lnkCopy = new System.Windows.Forms.LinkLabel();
             this.tabMain.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.grpOutput.SuspendLayout();
             this.grpConfiguration.SuspendLayout();
+            this.grpTenant.SuspendLayout();
             this.grpType.SuspendLayout();
             this.grpProfiles.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -111,6 +116,55 @@
             this.tabPage1.Text = "Generate Token";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // grpOutput
+            // 
+            this.grpOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpOutput.Controls.Add(this.lnkCopy);
+            this.grpOutput.Controls.Add(this.txtOutput);
+            this.grpOutput.Controls.Add(this.lnkCopyToDecode);
+            this.grpOutput.Controls.Add(this.lnkCopyToClip);
+            this.grpOutput.Location = new System.Drawing.Point(9, 588);
+            this.grpOutput.Margin = new System.Windows.Forms.Padding(5);
+            this.grpOutput.Name = "grpOutput";
+            this.grpOutput.Padding = new System.Windows.Forms.Padding(5);
+            this.grpOutput.Size = new System.Drawing.Size(894, 226);
+            this.grpOutput.TabIndex = 3;
+            this.grpOutput.TabStop = false;
+            this.grpOutput.Text = "Output";
+            // 
+            // lnkCopy
+            // 
+            this.lnkCopy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.lnkCopy.AutoSize = true;
+            this.lnkCopy.Enabled = false;
+            this.lnkCopy.ForeColor = System.Drawing.SystemColors.HotTrack;
+            this.lnkCopy.Location = new System.Drawing.Point(654, 184);
+            this.lnkCopy.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
+            this.lnkCopy.Name = "lnkCopy";
+            this.lnkCopy.Size = new System.Drawing.Size(58, 28);
+            this.lnkCopy.TabIndex = 2;
+            this.lnkCopy.TabStop = true;
+            this.lnkCopy.Text = "Copy";
+            this.toolTip.SetToolTip(this.lnkCopy, "Copies the output to the clipboard.");
+            this.lnkCopy.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkCopy_LinkClicked);
+            // 
+            // txtOutput
+            // 
+            this.txtOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtOutput.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.txtOutput.Location = new System.Drawing.Point(16, 40);
+            this.txtOutput.Margin = new System.Windows.Forms.Padding(5);
+            this.txtOutput.Multiline = true;
+            this.txtOutput.Name = "txtOutput";
+            this.txtOutput.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtOutput.Size = new System.Drawing.Size(862, 139);
+            this.txtOutput.TabIndex = 0;
+            this.toolTip.SetToolTip(this.txtOutput, "The generated token or error details.");
+            // 
             // lnkCopyToDecode
             // 
             this.lnkCopyToDecode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -143,43 +197,11 @@
             this.toolTip.SetToolTip(this.lnkCopyToClip, "Copies the output to the clipboard as an HTTP Authorization header.");
             this.lnkCopyToClip.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkCopyToClip_LinkClicked);
             // 
-            // grpOutput
-            // 
-            this.grpOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.grpOutput.Controls.Add(this.lnkCopy);
-            this.grpOutput.Controls.Add(this.txtOutput);
-            this.grpOutput.Controls.Add(this.lnkCopyToDecode);
-            this.grpOutput.Controls.Add(this.lnkCopyToClip);
-            this.grpOutput.Location = new System.Drawing.Point(9, 588);
-            this.grpOutput.Margin = new System.Windows.Forms.Padding(5);
-            this.grpOutput.Name = "grpOutput";
-            this.grpOutput.Padding = new System.Windows.Forms.Padding(5);
-            this.grpOutput.Size = new System.Drawing.Size(894, 226);
-            this.grpOutput.TabIndex = 3;
-            this.grpOutput.TabStop = false;
-            this.grpOutput.Text = "Output";
-            // 
-            // txtOutput
-            // 
-            this.txtOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtOutput.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.txtOutput.Location = new System.Drawing.Point(16, 40);
-            this.txtOutput.Margin = new System.Windows.Forms.Padding(5);
-            this.txtOutput.Multiline = true;
-            this.txtOutput.Name = "txtOutput";
-            this.txtOutput.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtOutput.Size = new System.Drawing.Size(862, 139);
-            this.txtOutput.TabIndex = 0;
-            this.toolTip.SetToolTip(this.txtOutput, "The generated token or error details.");
-            // 
             // grpConfiguration
             // 
             this.grpConfiguration.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpConfiguration.Controls.Add(this.grpTenant);
             this.grpConfiguration.Controls.Add(this.lblClientIdInstruction);
             this.grpConfiguration.Controls.Add(this.txtPassword);
             this.grpConfiguration.Controls.Add(this.lblPassword);
@@ -201,6 +223,69 @@
             this.grpConfiguration.TabIndex = 2;
             this.grpConfiguration.TabStop = false;
             this.grpConfiguration.Text = "Configuration";
+            // 
+            // grpTenant
+            // 
+            this.grpTenant.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpTenant.Controls.Add(this.radSingleTenant);
+            this.grpTenant.Controls.Add(this.radMultiTenant);
+            this.grpTenant.Controls.Add(this.txtTenant);
+            this.grpTenant.Location = new System.Drawing.Point(30, 293);
+            this.grpTenant.Name = "grpTenant";
+            this.grpTenant.Size = new System.Drawing.Size(847, 100);
+            this.grpTenant.TabIndex = 8;
+            this.grpTenant.TabStop = false;
+            this.grpTenant.Text = "Tenant";
+            // 
+            // radSingleTenant
+            // 
+            this.radSingleTenant.AutoSize = true;
+            this.radSingleTenant.Location = new System.Drawing.Point(92, 47);
+            this.radSingleTenant.Name = "radSingleTenant";
+            this.radSingleTenant.Size = new System.Drawing.Size(87, 32);
+            this.radSingleTenant.TabIndex = 1;
+            this.radSingleTenant.Text = "Single";
+            this.toolTip.SetToolTip(this.radSingleTenant, "The service can only be accessed by a specific tenant.");
+            this.radSingleTenant.UseVisualStyleBackColor = true;
+            this.radSingleTenant.CheckedChanged += new System.EventHandler(this.handleTenantSelection);
+            // 
+            // radMultiTenant
+            // 
+            this.radMultiTenant.AutoSize = true;
+            this.radMultiTenant.Checked = true;
+            this.radMultiTenant.Location = new System.Drawing.Point(7, 47);
+            this.radMultiTenant.Name = "radMultiTenant";
+            this.radMultiTenant.Size = new System.Drawing.Size(79, 32);
+            this.radMultiTenant.TabIndex = 0;
+            this.radMultiTenant.TabStop = true;
+            this.radMultiTenant.Text = "Multi";
+            this.toolTip.SetToolTip(this.radMultiTenant, "The service can be accessed by any tenant.");
+            this.radMultiTenant.UseVisualStyleBackColor = true;
+            this.radMultiTenant.CheckedChanged += new System.EventHandler(this.handleTenantSelection);
+            // 
+            // txtTenant
+            // 
+            this.txtTenant.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtTenant.Location = new System.Drawing.Point(203, 48);
+            this.txtTenant.Margin = new System.Windows.Forms.Padding(5);
+            this.txtTenant.Name = "txtTenant";
+            this.txtTenant.Size = new System.Drawing.Size(632, 34);
+            this.txtTenant.TabIndex = 2;
+            this.toolTip.SetToolTip(this.txtTenant, "The unique identifier for the tenant i.e. mytenant.onmicrosoft.com or c740abc1-89" +
+        "8e-456d-97d1-14f535d7b8b2");
+            this.txtTenant.Visible = false;
+            // 
+            // lblClientIdInstruction
+            // 
+            this.lblClientIdInstruction.AutoSize = true;
+            this.lblClientIdInstruction.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.lblClientIdInstruction.ForeColor = System.Drawing.Color.Maroon;
+            this.lblClientIdInstruction.Location = new System.Drawing.Point(163, 232);
+            this.lblClientIdInstruction.Name = "lblClientIdInstruction";
+            this.lblClientIdInstruction.Size = new System.Drawing.Size(423, 23);
+            this.lblClientIdInstruction.TabIndex = 14;
+            this.lblClientIdInstruction.Text = "Note: Client Id must be for a \'Native Application\' type.";
+            this.lblClientIdInstruction.Visible = false;
             // 
             // txtPassword
             // 
@@ -622,34 +707,6 @@
             this.toolTip.IsBalloon = true;
             this.toolTip.ReshowDelay = 100;
             // 
-            // lblClientIdInstruction
-            // 
-            this.lblClientIdInstruction.AutoSize = true;
-            this.lblClientIdInstruction.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.lblClientIdInstruction.ForeColor = System.Drawing.Color.Maroon;
-            this.lblClientIdInstruction.Location = new System.Drawing.Point(163, 232);
-            this.lblClientIdInstruction.Name = "lblClientIdInstruction";
-            this.lblClientIdInstruction.Size = new System.Drawing.Size(423, 23);
-            this.lblClientIdInstruction.TabIndex = 14;
-            this.lblClientIdInstruction.Text = "Note: Client Id must be for a \'Native Application\' type.";
-            this.lblClientIdInstruction.Visible = false;
-            // 
-            // lnkCopy
-            // 
-            this.lnkCopy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.lnkCopy.AutoSize = true;
-            this.lnkCopy.Enabled = false;
-            this.lnkCopy.ForeColor = System.Drawing.SystemColors.HotTrack;
-            this.lnkCopy.Location = new System.Drawing.Point(654, 184);
-            this.lnkCopy.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
-            this.lnkCopy.Name = "lnkCopy";
-            this.lnkCopy.Size = new System.Drawing.Size(58, 28);
-            this.lnkCopy.TabIndex = 2;
-            this.lnkCopy.TabStop = true;
-            this.lnkCopy.Text = "Copy";
-            this.toolTip.SetToolTip(this.lnkCopy, "Copies the output to the clipboard.");
-            this.lnkCopy.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkCopy_LinkClicked);
-            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 28F);
@@ -672,6 +729,8 @@
             this.grpOutput.PerformLayout();
             this.grpConfiguration.ResumeLayout(false);
             this.grpConfiguration.PerformLayout();
+            this.grpTenant.ResumeLayout(false);
+            this.grpTenant.PerformLayout();
             this.grpType.ResumeLayout(false);
             this.grpType.PerformLayout();
             this.grpProfiles.ResumeLayout(false);
@@ -735,6 +794,10 @@
         private System.Windows.Forms.ToolTip toolTip;
         private System.Windows.Forms.Label lblClientIdInstruction;
         private System.Windows.Forms.LinkLabel lnkCopy;
+        private System.Windows.Forms.GroupBox grpTenant;
+        private System.Windows.Forms.RadioButton radSingleTenant;
+        private System.Windows.Forms.RadioButton radMultiTenant;
+        private System.Windows.Forms.TextBox txtTenant;
     }
 }
 

@@ -9,6 +9,11 @@ namespace AzureTokenMaker.App.Model {
         User
     }
 
+    public enum TenantType
+    {
+        Multi,
+        Single
+    }
     public sealed class Profile : IEquatable<Profile>
     {
 
@@ -16,6 +21,8 @@ namespace AzureTokenMaker.App.Model {
 
         public TokenParameters Data {
             get; set; }
+
+        public TenantType TenantType { get; set; }
 
         public ProfileType Type {
             get; set; }
