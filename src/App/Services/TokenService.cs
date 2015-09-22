@@ -8,25 +8,24 @@ using AzureTokenMaker.App.Model;
 namespace AzureTokenMaker.App.Services {
     public class TokenService {
 
-        private readonly AuthenticationContext _context;
+        private AuthenticationContext _context;
 
-        public TokenService() {
-            _context = new AuthenticationContext("https://login.windows.net/common");
-        }
         public string GetClientToken ( TokenParameters parameters ) {
             if (parameters == null) {
                 throw new ArgumentNullException("parameters");
             }
 
-            var result = _context.AcquireToken( parameters.ResourceId,
+            var context = getContext(parameters.Tenant);
+            var result = context.AcquireToken(parameters.ResourceId,
                       new ClientCredential( parameters.ClientId, parameters.ClientKey ) );
 
             return result.AccessToken;
         }
 
         public string GetUserToken ( TokenParameters parameters ) {
-            
-            var result = _context.AcquireToken( parameters.ResourceId,
+            var context = getContext(parameters.Tenant);
+
+            var result = context.AcquireToken(parameters.ResourceId,
                                   parameters.ClientId, new UserCredential( parameters.Username, parameters.Password ) );
             return result.AccessToken;
         }
@@ -39,11 +38,11 @@ namespace AzureTokenMaker.App.Services {
             }
 
             string[] parts = token.Split( '.' );
-            JObject jsonPart = JObject.Parse( DecodeFromBase64( parts[0] ) );
+            JObject jsonPart = JObject.Parse( decodeFromBase64( parts[0] ) );
 
             string header = jsonPart.ToString( Formatting.Indented );
 
-            jsonPart = JObject.Parse( DecodeFromBase64( parts[1] ) );
+            jsonPart = JObject.Parse( decodeFromBase64( parts[1] ) );
             string claims = jsonPart.ToString( Formatting.Indented );
 
             string signature = parts[2];
@@ -53,9 +52,19 @@ namespace AzureTokenMaker.App.Services {
             return result;
         }
 
+        private AuthenticationContext getContext(string tenant)
+        {
+            string authority = String.Format("https://login.windows.net/{0}", tenant);
+            if (_context == null || !authority.Equals(_context.Authority, StringComparison.InvariantCultureIgnoreCase))
+            {
+                _context = new AuthenticationContext(authority);
+            }
+            return _context;
+        }
+
         //Note: Code was adapted from https://github.com/CommonWell/Token-Maker/blob/master/src/Token%20Maker/MainWindow.xaml.cs#L512
         //Thanks Peter Bernhardt!
-        private static string DecodeFromBase64 ( string encodedData ) {
+        private static string decodeFromBase64 ( string encodedData ) {
             int padding = encodedData.Length % 4;
             if ( padding > 0 ) {
                 encodedData += new string( '=', ( 4 - padding ) );

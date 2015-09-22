@@ -15,5 +15,7 @@ namespace AzureTokenMaker.App.Model {
 
         public string Password {
             get; set; }
+
+        public string Tenant { get; set; }
     }
 }
