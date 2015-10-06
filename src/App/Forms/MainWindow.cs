@@ -1,12 +1,14 @@
-﻿using System;
-using System.Globalization;
-using System.Windows.Forms;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
-using Newtonsoft.Json;
-using AzureTokenMaker.App.Services;
-using AzureTokenMaker.App.Model;
+﻿namespace AzureTokenMaker.App.Forms {
 
-namespace AzureTokenMaker.App.Forms {
+    using System;
+    using System.Globalization;
+    using System.Windows.Forms;
+    using Microsoft.IdentityModel.Clients.ActiveDirectory;
+    using Newtonsoft.Json;
+    using Services;
+    using Model;
+    using Properties;
+
     public partial class MainWindow : Form {
 
         private ProfileService _profileService;
@@ -14,7 +16,7 @@ namespace AzureTokenMaker.App.Forms {
         private Profile _currentProfile;
 
         public MainWindow () {
-            InitializeComponent();
+            InitializeComponent();            
         }
         
         private TokenParameters createTokenParametersFromInput() {
@@ -75,15 +77,40 @@ namespace AzureTokenMaker.App.Forms {
             var profiles = _profileService.GetProfiles();
 
             cboProfile.Items.Clear();
-            
+
+            int selectedIndex = -1;
+            int counter = 0;
             foreach ( var profile in profiles ) {
                 cboProfile.Items.Add( profile );
+                if (profile.Name == Settings.Default.LastProfileName)
+                {
+                    selectedIndex = counter;
+                }
+                counter++;
             }
-            
+
+            cboProfile.SelectedIndex = selectedIndex;
             cboProfile.DisplayMember = "Name";
         }
 
         private void Main_Load ( object sender, EventArgs e ) {
+
+            if (Settings.Default.LastFormWasMaximized)
+            {
+                WindowState = FormWindowState.Maximized;
+            }
+            else
+            {
+                if (Settings.Default.LastFormHeight > 0)
+                {
+                    Height = Settings.Default.LastFormHeight;
+                }
+
+                if (Settings.Default.LastFormWidth > 0)
+                {
+                    Width = Settings.Default.LastFormWidth;
+                }
+            }
             _profileService = ProfileService.Init();
             _tokenService = new TokenService();
             toggleConfigurationGroup(false);
@@ -139,9 +166,17 @@ namespace AzureTokenMaker.App.Forms {
         {
             Profile targetProfile = getProposedProfile();
             _profileService.Save(targetProfile);
-            loadProfiles();
-            populateControls(targetProfile);
-            cboProfile.SelectedItem = targetProfile;
+            
+            foreach (var item in cboProfile.Items)
+            {
+                var profileItem = (Profile)item;
+                if (profileItem.Name == targetProfile.Name)
+                {
+                    profileItem.Data = targetProfile.Data;
+                    profileItem.TenantType = targetProfile.TenantType;
+                    profileItem.Type = targetProfile.Type;
+                }
+            }
             _currentProfile = targetProfile;
             return _currentProfile;
         }
@@ -314,12 +349,14 @@ namespace AzureTokenMaker.App.Forms {
                 tstat.Text = "ATTENTION: There was an error. See Output box for details";
                 lnkCopy.Enabled = true;
                 lnkCopyToClip.Enabled = false;
+                lnkCopyAsParameter.Enabled = false;
                 lnkCopyToDecode.Enabled = false;
             } else {
                 txtOutput.Text = (string) e.Result;
                 tstat.Text = String.Format("Generated token for '{0}'", txtAppId.Text);
                 lnkCopy.Enabled = true;
                 lnkCopyToClip.Enabled = true;
+                lnkCopyAsParameter.Enabled = true;
                 lnkCopyToDecode.Enabled = true;
             }
             toggleGenerate(true);
@@ -423,6 +460,15 @@ namespace AzureTokenMaker.App.Forms {
 
         private void MainWindow_FormClosing ( object sender, FormClosingEventArgs e ) {
             var target = getProposedProfile();
+            Settings.Default.LastFormHeight = Height;
+            Settings.Default.LastFormWidth = Width;
+            if (_currentProfile != null)
+            {
+                Settings.Default.LastProfileName = _currentProfile.Name;
+            }
+
+            Settings.Default.LastFormWasMaximized = WindowState == FormWindowState.Maximized;
+            Settings.Default.Save();
             if (isDirty(target)) {
                 
                     var result = MessageBox.Show(this,
@@ -440,7 +486,7 @@ namespace AzureTokenMaker.App.Forms {
                             e.Cancel = true;
                             return;
                     }                
-            }
+            }        
         }
 
         private void lnkCopy_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -456,6 +502,16 @@ namespace AzureTokenMaker.App.Forms {
         private void handleTenantSelection(object sender, EventArgs e)
         {
             txtTenant.Visible = radSingleTenant.Checked;
+        }
+
+        private void lnkCopyAsParameter_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (String.IsNullOrWhiteSpace(txtOutput.Text))
+            {
+                return;
+            }
+            Clipboard.SetText("Bearer " + txtOutput.Text.Trim());
+            tstat.Text = "The output was copied to the clipboard as a Bearer parameter";
         }
     }
 }
