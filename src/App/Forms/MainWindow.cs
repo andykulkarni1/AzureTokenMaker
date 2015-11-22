@@ -204,6 +204,8 @@
         }
 
         private void reset(bool keepSelectedItem = false) {
+            clearAllErrors();
+
             if (!keepSelectedItem) {
                 cboProfile.SelectedItem = null;
             }
@@ -215,7 +217,7 @@
             txtUsername.Text = String.Empty;
             txtOutput.Text = String.Empty;
         }
-
+        
         private Profile getProposedProfile() {
             //populate a profile from the controls
             var profile = new Profile
@@ -230,6 +232,7 @@
         }
 
         private void btnGenerate_Click ( object sender, EventArgs e ) {
+
             TokenParameters tokenParameters = null;
             if (radClient.Checked) {
                 if (!validateForClient()) {
@@ -279,6 +282,8 @@
         private bool validateForUser() {
             bool isValid = true;
 
+            clearAllErrors();
+
             if ( String.IsNullOrWhiteSpace( txtClientId.Text ) ) {
                 erpConfiguration.SetError( txtClientId, "Please enter a client id." );
                 isValid = false;
@@ -300,8 +305,20 @@
             return isValid;
         }
 
+        private void clearAllErrors()
+        {
+            erpConfiguration.SetError(txtClientId, String.Empty);
+            erpConfiguration.SetError(txtClientKey, String.Empty);
+            erpConfiguration.SetError(txtAppId, String.Empty);
+            erpConfiguration.SetError(txtTenant, String.Empty);
+            erpConfiguration.SetError(txtUsername, String.Empty);
+            erpConfiguration.SetError(txtPassword, String.Empty);
+        }
+
         private bool validateForClient () {
             bool isValid = true;
+
+            clearAllErrors();
 
             if (String.IsNullOrWhiteSpace(txtClientId.Text)) {
                 erpConfiguration.SetError(txtClientId, "Please enter a client id.");
@@ -394,6 +411,8 @@
         }
 
         private void btnDecode_Click ( object sender, EventArgs e ) {
+            erpDecode.SetError(txtToken, String.Empty);
+
             if (String.IsNullOrWhiteSpace(txtToken.Text)) {
                 erpDecode.SetError(txtToken, "Please enter a valid Json Web Token.");
                 return;
