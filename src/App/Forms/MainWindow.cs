@@ -268,7 +268,7 @@
             tokenParameters.ClientId = txtClientId.Text.Trim();
             tokenParameters.ClientKey = txtClientKey.Text.Trim();
             tokenParameters.ResourceId = txtAppId.Text.Trim();
-            if (radMultiTenant.Checked)
+            if (radUser.Checked && !radMultiTenant.Checked)
             {
                 tokenParameters.Tenant = "common";
             }
